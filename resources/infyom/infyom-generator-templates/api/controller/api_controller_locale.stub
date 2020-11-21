@@ -32,7 +32,7 @@ class $MODEL_NAME$APIController extends AppBaseController
             ->paginate());
 
         return $this->sendResponse(
-            $$MODEL_NAME_PLURAL_CAMEL$->toArray(),
+            $$MODEL_NAME_PLURAL_CAMEL$,
             __('messages.retrieved', ['model' => __('models/$MODEL_NAME_PLURAL_CAMEL$.plural')])
         );
     }
