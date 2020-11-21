@@ -50,6 +50,15 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        if (
+            $exception
+            instanceof
+            \Illuminate\Database\Eloquent\ModelNotFoundException
+            && request()->header('Accept') == 'application/json'
+        ) {
+            throw new MyApiException($exception->getMessage(), 404);
+        }
+
         return parent::render($request, $exception);
     }
 }

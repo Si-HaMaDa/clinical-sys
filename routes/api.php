@@ -14,6 +14,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+
+Route::resource('users', 'UserAPIController')->only('show', 'update')->middleware('auth:api');
+
+Route::post('users', 'UserAPIController@store');
+Route::post('users/device_token', 'UserAPIController@device_token');
+Route::post('users/login', 'UserAPIController@login');
+Route::post('users/verify_code', 'UserAPIController@verify_code');
+Route::group([
+    'namespace' => 'Auth',
+    'middleware' => 'api',
+    'prefix' => 'password'
+], function () {
+    Route::post('resetlink', 'PasswordResetController@sendResetLinkEmail');
+    Route::post('create', 'PasswordResetController@create');
+    Route::get('find/{token}', 'PasswordResetController@find');
+    Route::post('reset', 'PasswordResetController@reset');
 });
