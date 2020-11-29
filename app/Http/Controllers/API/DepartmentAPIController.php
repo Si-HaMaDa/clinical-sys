@@ -62,6 +62,7 @@ class DepartmentAPIController extends AppBaseController
     public function index(Request $request)
     {
         $departments = QueryBuilder::for(Department::class)
+            ->with('branches')
             ->allowedFilters($this->departmentRepository->getFieldsSearchable())
             ->allowedSorts($this->departmentRepository->getFieldsSearchable())
             ->paginate();

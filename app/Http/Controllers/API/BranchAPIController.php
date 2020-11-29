@@ -62,6 +62,7 @@ class BranchAPIController extends AppBaseController
     public function index(Request $request)
     {
         $branches = QueryBuilder::for(Branch::class)
+            ->with('departments')
             ->allowedFilters($this->branchRepository->getFieldsSearchable())
             ->allowedSorts($this->branchRepository->getFieldsSearchable())
             ->paginate();

@@ -8,6 +8,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\LaratrustUserTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Passport\HasApiTokens;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @SWG\Definition(
@@ -79,10 +82,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      )
  * )
  */
-class User extends Authenticatable
-implements \Illuminate\Contracts\Auth\Authenticatable
+class User extends Authenticatable implements HasMedia
 {
-    use LaratrustUserTrait, SoftDeletes;
+    use HasApiTokens, Notifiable, SoftDeletes, InteractsWithMedia, LaratrustUserTrait;
 
     public $table = 'users';
 
@@ -135,5 +137,37 @@ implements \Illuminate\Contracts\Auth\Authenticatable
         'password' => 'required'
     ];
 
+    public function setPasswordAttribute($password)
+    {
+        if (is_null($password) && strlen($password) == 0)
+            return;
+        if (!is_null($password) && strlen($password) == 60 && preg_match('/^\$2y\$/', $password)) {
+            $this->attributes['password'] = $password ?? '';
+        } else {
+            $this->attributes['password'] = bcrypt($password);
+        }
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this
+            ->addMediaCollection('image')
+            ->singleFile()
+            ->useFallbackUrl('/assets/images/user.jpg');
+    }
+
+    /* Accessors */
+    public function getImageAttribute()
+    {
+        return url($this->getFirstMediaUrl('image'));
+    }
+
+    /**
+     * Get the user's Devicetokens.
+     */
+    public function devicetokens()
+    {
+        return $this->hasMany(\App\Models\Devicetoken::class);
+    }
 
 }

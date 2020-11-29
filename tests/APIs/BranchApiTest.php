@@ -19,7 +19,7 @@ class BranchApiTest extends TestCase
 
         $this->response = $this->json(
             'POST',
-            '/api/backend/branches', $branch
+            '/api/branches', $branch
         );
 
         $this->assertApiResponse($branch);
@@ -34,7 +34,7 @@ class BranchApiTest extends TestCase
 
         $this->response = $this->json(
             'GET',
-            '/api/backend/branches/'.$branch->id
+            '/api/branches/'.$branch->id
         );
 
         $this->assertApiResponse($branch->toArray());
@@ -50,7 +50,7 @@ class BranchApiTest extends TestCase
 
         $this->response = $this->json(
             'PUT',
-            '/api/backend/branches/'.$branch->id,
+            '/api/branches/'.$branch->id,
             $editedBranch
         );
 
@@ -66,13 +66,13 @@ class BranchApiTest extends TestCase
 
         $this->response = $this->json(
             'DELETE',
-             '/api/backend/branches/'.$branch->id
+             '/api/branches/'.$branch->id
          );
 
         $this->assertApiSuccess();
         $this->response = $this->json(
             'GET',
-            '/api/backend/branches/'.$branch->id
+            '/api/branches/'.$branch->id
         );
 
         $this->response->assertStatus(404);

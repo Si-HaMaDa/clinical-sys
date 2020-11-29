@@ -19,7 +19,7 @@ class DepartmentApiTest extends TestCase
 
         $this->response = $this->json(
             'POST',
-            '/api/backend/departments', $department
+            '/api/departments', $department
         );
 
         $this->assertApiResponse($department);
@@ -34,7 +34,7 @@ class DepartmentApiTest extends TestCase
 
         $this->response = $this->json(
             'GET',
-            '/api/backend/departments/'.$department->id
+            '/api/departments/'.$department->id
         );
 
         $this->assertApiResponse($department->toArray());
@@ -50,7 +50,7 @@ class DepartmentApiTest extends TestCase
 
         $this->response = $this->json(
             'PUT',
-            '/api/backend/departments/'.$department->id,
+            '/api/departments/'.$department->id,
             $editedDepartment
         );
 
@@ -66,13 +66,13 @@ class DepartmentApiTest extends TestCase
 
         $this->response = $this->json(
             'DELETE',
-             '/api/backend/departments/'.$department->id
+             '/api/departments/'.$department->id
          );
 
         $this->assertApiSuccess();
         $this->response = $this->json(
             'GET',
-            '/api/backend/departments/'.$department->id
+            '/api/departments/'.$department->id
         );
 
         $this->response->assertStatus(404);

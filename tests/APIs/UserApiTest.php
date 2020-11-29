@@ -19,7 +19,7 @@ class UserApiTest extends TestCase
 
         $this->response = $this->json(
             'POST',
-            '/api/backend/users', $user
+            '/api/users', $user
         );
 
         $this->assertApiResponse($user);
@@ -34,7 +34,7 @@ class UserApiTest extends TestCase
 
         $this->response = $this->json(
             'GET',
-            '/api/backend/users/'.$user->id
+            '/api/users/'.$user->id
         );
 
         $this->assertApiResponse($user->toArray());
@@ -50,7 +50,7 @@ class UserApiTest extends TestCase
 
         $this->response = $this->json(
             'PUT',
-            '/api/backend/users/'.$user->id,
+            '/api/users/'.$user->id,
             $editedUser
         );
 
@@ -66,13 +66,13 @@ class UserApiTest extends TestCase
 
         $this->response = $this->json(
             'DELETE',
-             '/api/backend/users/'.$user->id
+             '/api/users/'.$user->id
          );
 
         $this->assertApiSuccess();
         $this->response = $this->json(
             'GET',
-            '/api/backend/users/'.$user->id
+            '/api/users/'.$user->id
         );
 
         $this->response->assertStatus(404);

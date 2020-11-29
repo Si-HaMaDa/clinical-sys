@@ -80,4 +80,12 @@ class Branch extends Model
         'address' => 'nullable',
         'phone' => 'nullable'
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     **/
+    public function departments()
+    {
+        return $this->belongsToMany(\App\Models\Department::class);
+    }
 }
