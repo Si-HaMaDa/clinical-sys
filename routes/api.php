@@ -35,3 +35,11 @@ Route::group([
     Route::get('find/{token}', 'PasswordResetController@find');
     Route::post('reset', 'PasswordResetController@reset');
 });
+
+Route::resource('users', 'UserAPIController');
+
+Route::resource('branches', 'BranchAPIController');
+
+Route::resource('departments', 'DepartmentAPIController');
+
+Route::resource('appointments', 'AppointmentAPIController');

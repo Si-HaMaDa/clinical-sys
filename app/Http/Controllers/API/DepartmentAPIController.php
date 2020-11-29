@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Requests\API\CreateUserAPIRequest;
-use App\Http\Requests\API\UpdateUserAPIRequest;
-use App\Models\User;
-use App\Repositories\UserRepository;
+use App\Http\Requests\API\CreateDepartmentAPIRequest;
+use App\Http\Requests\API\UpdateDepartmentAPIRequest;
+use App\Models\Department;
+use App\Repositories\DepartmentRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\DepartmentResource;
 use Response;
 use Spatie\QueryBuilder\QueryBuilder;
 
 /**
- * Class UserController
+ * Class DepartmentController
  * @package App\Http\Controllers\API
  */
 
-class UserAPIController extends AppBaseController
+class DepartmentAPIController extends AppBaseController
 {
-    /** @var  UserRepository */
-    private $userRepository;
+    /** @var  DepartmentRepository */
+    private $departmentRepository;
 
-    public function __construct(UserRepository $userRepo)
+    public function __construct(DepartmentRepository $departmentRepo)
     {
-        $this->userRepository = $userRepo;
+        $this->departmentRepository = $departmentRepo;
     }
 
     /**
@@ -32,10 +32,10 @@ class UserAPIController extends AppBaseController
      * @return Response
      *
      * @SWG\Get(
-     *      path="/users",
-     *      summary="Get a listing of the Users.",
-     *      tags={"User"},
-     *      description="Get all Users",
+     *      path="/departments",
+     *      summary="Get a listing of the Departments.",
+     *      tags={"Department"},
+     *      description="Get all Departments",
      *      produces={"application/json"},
      *      @SWG\Response(
      *          response=200,
@@ -49,7 +49,7 @@ class UserAPIController extends AppBaseController
      *              @SWG\Property(
      *                  property="data",
      *                  type="array",
-     *                  @SWG\Items(ref="#/definitions/User")
+     *                  @SWG\Items(ref="#/definitions/Department")
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -61,33 +61,33 @@ class UserAPIController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $users = QueryBuilder::for(User::class)
-            ->allowedFilters($this->userRepository->getFieldsSearchable())
-            ->allowedSorts($this->userRepository->getFieldsSearchable())
+        $departments = QueryBuilder::for(Department::class)
+            ->allowedFilters($this->departmentRepository->getFieldsSearchable())
+            ->allowedSorts($this->departmentRepository->getFieldsSearchable())
             ->paginate();
 
         return $this->sendResponse(
-            UserResource::collection($users),
-            __('messages.retrieved', ['model' => __('models/users.plural')])
+            DepartmentResource::collection($departments),
+            __('messages.retrieved', ['model' => __('models/departments.plural')])
         );
     }
 
     /**
-     * @param CreateUserAPIRequest $request
+     * @param CreateDepartmentAPIRequest $request
      * @return Response
      *
      * @SWG\Post(
-     *      path="/users",
-     *      summary="Store a newly created User in storage",
-     *      tags={"User"},
-     *      description="Store User",
+     *      path="/departments",
+     *      summary="Store a newly created Department in storage",
+     *      tags={"Department"},
+     *      description="Store Department",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="body",
      *          in="body",
-     *          description="User that should be stored",
+     *          description="Department that should be stored",
      *          required=false,
-     *          @SWG\Schema(ref="#/definitions/User")
+     *          @SWG\Schema(ref="#/definitions/Department")
      *      ),
      *      @SWG\Response(
      *          response=200,
@@ -100,7 +100,7 @@ class UserAPIController extends AppBaseController
      *              ),
      *              @SWG\Property(
      *                  property="data",
-     *                  ref="#/definitions/User"
+     *                  ref="#/definitions/Department"
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -110,15 +110,15 @@ class UserAPIController extends AppBaseController
      *      )
      * )
      */
-    public function store(CreateUserAPIRequest $request)
+    public function store(CreateDepartmentAPIRequest $request)
     {
         $input = $request->all();
 
-        $user = $this->userRepository->create($input);
+        $department = $this->departmentRepository->create($input);
 
         return $this->sendResponse(
-            new UserResource($user),
-            __('messages.saved', ['model' => __('models/users.singular')])
+            new DepartmentResource($department),
+            __('messages.saved', ['model' => __('models/departments.singular')])
         );
     }
 
@@ -127,14 +127,14 @@ class UserAPIController extends AppBaseController
      * @return Response
      *
      * @SWG\Get(
-     *      path="/users/{id}",
-     *      summary="Display the specified User",
-     *      tags={"User"},
-     *      description="Get User",
+     *      path="/departments/{id}",
+     *      summary="Display the specified Department",
+     *      tags={"Department"},
+     *      description="Get Department",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="id",
-     *          description="id of User",
+     *          description="id of Department",
      *          type="integer",
      *          required=true,
      *          in="path"
@@ -150,7 +150,7 @@ class UserAPIController extends AppBaseController
      *              ),
      *              @SWG\Property(
      *                  property="data",
-     *                  ref="#/definitions/User"
+     *                  ref="#/definitions/Department"
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -162,35 +162,35 @@ class UserAPIController extends AppBaseController
      */
     public function show($id)
     {
-        /** @var User $user */
-        $user = $this->userRepository->find($id);
+        /** @var Department $department */
+        $department = $this->departmentRepository->find($id);
 
-        if (empty($user)) {
+        if (empty($department)) {
             return $this->sendError(
-                __('messages.not_found', ['model' => __('models/users.singular')])
+                __('messages.not_found', ['model' => __('models/departments.singular')])
             );
         }
 
         return $this->sendResponse(
-            new UserResource($user),
-            __('messages.retrieved', ['model' => __('models/users.singular')])
+            new DepartmentResource($department),
+            __('messages.retrieved', ['model' => __('models/departments.singular')])
         );
     }
 
     /**
      * @param int $id
-     * @param UpdateUserAPIRequest $request
+     * @param UpdateDepartmentAPIRequest $request
      * @return Response
      *
      * @SWG\Put(
-     *      path="/users/{id}",
-     *      summary="Update the specified User in storage",
-     *      tags={"User"},
-     *      description="Update User",
+     *      path="/departments/{id}",
+     *      summary="Update the specified Department in storage",
+     *      tags={"Department"},
+     *      description="Update Department",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="id",
-     *          description="id of User",
+     *          description="id of Department",
      *          type="integer",
      *          required=true,
      *          in="path"
@@ -198,9 +198,9 @@ class UserAPIController extends AppBaseController
      *      @SWG\Parameter(
      *          name="body",
      *          in="body",
-     *          description="User that should be updated",
+     *          description="Department that should be updated",
      *          required=false,
-     *          @SWG\Schema(ref="#/definitions/User")
+     *          @SWG\Schema(ref="#/definitions/Department")
      *      ),
      *      @SWG\Response(
      *          response=200,
@@ -213,7 +213,7 @@ class UserAPIController extends AppBaseController
      *              ),
      *              @SWG\Property(
      *                  property="data",
-     *                  ref="#/definitions/User"
+     *                  ref="#/definitions/Department"
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -223,24 +223,24 @@ class UserAPIController extends AppBaseController
      *      )
      * )
      */
-    public function update($id, UpdateUserAPIRequest $request)
+    public function update($id, UpdateDepartmentAPIRequest $request)
     {
         $input = $request->all();
 
-        /** @var User $user */
-        $user = $this->userRepository->find($id);
+        /** @var Department $department */
+        $department = $this->departmentRepository->find($id);
 
-        if (empty($user)) {
+        if (empty($department)) {
             return $this->sendError(
-                __('messages.not_found', ['model' => __('models/users.singular')])
+                __('messages.not_found', ['model' => __('models/departments.singular')])
             );
         }
 
-        $user = $this->userRepository->update($input, $id);
+        $department = $this->departmentRepository->update($input, $id);
 
         return $this->sendResponse(
-            new UserResource($user),
-            __('messages.updated', ['model' => __('models/users.singular')])
+            new DepartmentResource($department),
+            __('messages.updated', ['model' => __('models/departments.singular')])
         );
     }
 
@@ -249,14 +249,14 @@ class UserAPIController extends AppBaseController
      * @return Response
      *
      * @SWG\Delete(
-     *      path="/users/{id}",
-     *      summary="Remove the specified User from storage",
-     *      tags={"User"},
-     *      description="Delete User",
+     *      path="/departments/{id}",
+     *      summary="Remove the specified Department from storage",
+     *      tags={"Department"},
+     *      description="Delete Department",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="id",
-     *          description="id of User",
+     *          description="id of Department",
      *          type="integer",
      *          required=true,
      *          in="path"
@@ -284,20 +284,20 @@ class UserAPIController extends AppBaseController
      */
     public function destroy($id)
     {
-        /** @var User $user */
-        $user = $this->userRepository->find($id);
+        /** @var Department $department */
+        $department = $this->departmentRepository->find($id);
 
-        if (empty($user)) {
+        if (empty($department)) {
             return $this->sendError(
-                __('messages.not_found', ['model' => __('models/users.singular')])
+                __('messages.not_found', ['model' => __('models/departments.singular')])
             );
         }
 
-        $user->delete();
+        $department->delete();
 
         return $this->sendResponse(
             $id,
-            __('messages.deleted', ['model' => __('models/users.singular')])
+            __('messages.deleted', ['model' => __('models/departments.singular')])
         );
     }
 }

@@ -2,28 +2,25 @@
 
 namespace App\Repositories;
 
-use App\Models\User;
+use App\Models\Department;
 use App\Repositories\BaseRepository;
 
 /**
- * Class UserRepository
+ * Class DepartmentRepository
  * @package App\Repositories
- * @version November 15, 2020, 6:59 pm UTC
+ * @version November 25, 2020, 8:48 pm UTC
 */
 
-class UserRepository extends BaseRepository
+class DepartmentRepository extends BaseRepository
 {
     /**
      * @var array
      */
     protected $fieldSearchable = [
         'name',
-        'phone',
-        'address',
-        'gender',
-        'age',
-        'image',
-        'email'
+        'slug',
+        'note',
+        'active'
     ];
 
     /**
@@ -41,6 +38,6 @@ class UserRepository extends BaseRepository
      **/
     public function model()
     {
-        return User::class;
+        return Department::class;
     }
 }

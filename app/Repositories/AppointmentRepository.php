@@ -2,28 +2,35 @@
 
 namespace App\Repositories;
 
-use App\Models\User;
+use App\Models\Appointment;
 use App\Repositories\BaseRepository;
 
 /**
- * Class UserRepository
+ * Class AppointmentRepository
  * @package App\Repositories
- * @version November 15, 2020, 6:59 pm UTC
+ * @version November 29, 2020, 1:46 am UTC
 */
 
-class UserRepository extends BaseRepository
+class AppointmentRepository extends BaseRepository
 {
     /**
      * @var array
      */
     protected $fieldSearchable = [
         'name',
+        'email',
         'phone',
-        'address',
         'gender',
-        'age',
-        'image',
-        'email'
+        'birth',
+        'address',
+        'patient_id',
+        'doctor_id',
+        'date',
+        'time',
+        'payment_method',
+        'offer_id',
+        'tax_id',
+        'note'
     ];
 
     /**
@@ -41,6 +48,6 @@ class UserRepository extends BaseRepository
      **/
     public function model()
     {
-        return User::class;
+        return Appointment::class;
     }
 }

@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Requests\API\CreateUserAPIRequest;
-use App\Http\Requests\API\UpdateUserAPIRequest;
-use App\Models\User;
-use App\Repositories\UserRepository;
+use App\Http\Requests\API\CreateBranchAPIRequest;
+use App\Http\Requests\API\UpdateBranchAPIRequest;
+use App\Models\Branch;
+use App\Repositories\BranchRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\BranchResource;
 use Response;
 use Spatie\QueryBuilder\QueryBuilder;
 
 /**
- * Class UserController
+ * Class BranchController
  * @package App\Http\Controllers\API
  */
 
-class UserAPIController extends AppBaseController
+class BranchAPIController extends AppBaseController
 {
-    /** @var  UserRepository */
-    private $userRepository;
+    /** @var  BranchRepository */
+    private $branchRepository;
 
-    public function __construct(UserRepository $userRepo)
+    public function __construct(BranchRepository $branchRepo)
     {
-        $this->userRepository = $userRepo;
+        $this->branchRepository = $branchRepo;
     }
 
     /**
@@ -32,10 +32,10 @@ class UserAPIController extends AppBaseController
      * @return Response
      *
      * @SWG\Get(
-     *      path="/users",
-     *      summary="Get a listing of the Users.",
-     *      tags={"User"},
-     *      description="Get all Users",
+     *      path="/branches",
+     *      summary="Get a listing of the Branches.",
+     *      tags={"Branch"},
+     *      description="Get all Branches",
      *      produces={"application/json"},
      *      @SWG\Response(
      *          response=200,
@@ -49,7 +49,7 @@ class UserAPIController extends AppBaseController
      *              @SWG\Property(
      *                  property="data",
      *                  type="array",
-     *                  @SWG\Items(ref="#/definitions/User")
+     *                  @SWG\Items(ref="#/definitions/Branch")
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -61,33 +61,33 @@ class UserAPIController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $users = QueryBuilder::for(User::class)
-            ->allowedFilters($this->userRepository->getFieldsSearchable())
-            ->allowedSorts($this->userRepository->getFieldsSearchable())
+        $branches = QueryBuilder::for(Branch::class)
+            ->allowedFilters($this->branchRepository->getFieldsSearchable())
+            ->allowedSorts($this->branchRepository->getFieldsSearchable())
             ->paginate();
 
         return $this->sendResponse(
-            UserResource::collection($users),
-            __('messages.retrieved', ['model' => __('models/users.plural')])
+            BranchResource::collection($branches),
+            __('messages.retrieved', ['model' => __('models/branches.plural')])
         );
     }
 
     /**
-     * @param CreateUserAPIRequest $request
+     * @param CreateBranchAPIRequest $request
      * @return Response
      *
      * @SWG\Post(
-     *      path="/users",
-     *      summary="Store a newly created User in storage",
-     *      tags={"User"},
-     *      description="Store User",
+     *      path="/branches",
+     *      summary="Store a newly created Branch in storage",
+     *      tags={"Branch"},
+     *      description="Store Branch",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="body",
      *          in="body",
-     *          description="User that should be stored",
+     *          description="Branch that should be stored",
      *          required=false,
-     *          @SWG\Schema(ref="#/definitions/User")
+     *          @SWG\Schema(ref="#/definitions/Branch")
      *      ),
      *      @SWG\Response(
      *          response=200,
@@ -100,7 +100,7 @@ class UserAPIController extends AppBaseController
      *              ),
      *              @SWG\Property(
      *                  property="data",
-     *                  ref="#/definitions/User"
+     *                  ref="#/definitions/Branch"
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -110,15 +110,15 @@ class UserAPIController extends AppBaseController
      *      )
      * )
      */
-    public function store(CreateUserAPIRequest $request)
+    public function store(CreateBranchAPIRequest $request)
     {
         $input = $request->all();
 
-        $user = $this->userRepository->create($input);
+        $branch = $this->branchRepository->create($input);
 
         return $this->sendResponse(
-            new UserResource($user),
-            __('messages.saved', ['model' => __('models/users.singular')])
+            new BranchResource($branch),
+            __('messages.saved', ['model' => __('models/branches.singular')])
         );
     }
 
@@ -127,14 +127,14 @@ class UserAPIController extends AppBaseController
      * @return Response
      *
      * @SWG\Get(
-     *      path="/users/{id}",
-     *      summary="Display the specified User",
-     *      tags={"User"},
-     *      description="Get User",
+     *      path="/branches/{id}",
+     *      summary="Display the specified Branch",
+     *      tags={"Branch"},
+     *      description="Get Branch",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="id",
-     *          description="id of User",
+     *          description="id of Branch",
      *          type="integer",
      *          required=true,
      *          in="path"
@@ -150,7 +150,7 @@ class UserAPIController extends AppBaseController
      *              ),
      *              @SWG\Property(
      *                  property="data",
-     *                  ref="#/definitions/User"
+     *                  ref="#/definitions/Branch"
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -162,35 +162,35 @@ class UserAPIController extends AppBaseController
      */
     public function show($id)
     {
-        /** @var User $user */
-        $user = $this->userRepository->find($id);
+        /** @var Branch $branch */
+        $branch = $this->branchRepository->find($id);
 
-        if (empty($user)) {
+        if (empty($branch)) {
             return $this->sendError(
-                __('messages.not_found', ['model' => __('models/users.singular')])
+                __('messages.not_found', ['model' => __('models/branches.singular')])
             );
         }
 
         return $this->sendResponse(
-            new UserResource($user),
-            __('messages.retrieved', ['model' => __('models/users.singular')])
+            new BranchResource($branch),
+            __('messages.retrieved', ['model' => __('models/branches.singular')])
         );
     }
 
     /**
      * @param int $id
-     * @param UpdateUserAPIRequest $request
+     * @param UpdateBranchAPIRequest $request
      * @return Response
      *
      * @SWG\Put(
-     *      path="/users/{id}",
-     *      summary="Update the specified User in storage",
-     *      tags={"User"},
-     *      description="Update User",
+     *      path="/branches/{id}",
+     *      summary="Update the specified Branch in storage",
+     *      tags={"Branch"},
+     *      description="Update Branch",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="id",
-     *          description="id of User",
+     *          description="id of Branch",
      *          type="integer",
      *          required=true,
      *          in="path"
@@ -198,9 +198,9 @@ class UserAPIController extends AppBaseController
      *      @SWG\Parameter(
      *          name="body",
      *          in="body",
-     *          description="User that should be updated",
+     *          description="Branch that should be updated",
      *          required=false,
-     *          @SWG\Schema(ref="#/definitions/User")
+     *          @SWG\Schema(ref="#/definitions/Branch")
      *      ),
      *      @SWG\Response(
      *          response=200,
@@ -213,7 +213,7 @@ class UserAPIController extends AppBaseController
      *              ),
      *              @SWG\Property(
      *                  property="data",
-     *                  ref="#/definitions/User"
+     *                  ref="#/definitions/Branch"
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -223,24 +223,24 @@ class UserAPIController extends AppBaseController
      *      )
      * )
      */
-    public function update($id, UpdateUserAPIRequest $request)
+    public function update($id, UpdateBranchAPIRequest $request)
     {
         $input = $request->all();
 
-        /** @var User $user */
-        $user = $this->userRepository->find($id);
+        /** @var Branch $branch */
+        $branch = $this->branchRepository->find($id);
 
-        if (empty($user)) {
+        if (empty($branch)) {
             return $this->sendError(
-                __('messages.not_found', ['model' => __('models/users.singular')])
+                __('messages.not_found', ['model' => __('models/branches.singular')])
             );
         }
 
-        $user = $this->userRepository->update($input, $id);
+        $branch = $this->branchRepository->update($input, $id);
 
         return $this->sendResponse(
-            new UserResource($user),
-            __('messages.updated', ['model' => __('models/users.singular')])
+            new BranchResource($branch),
+            __('messages.updated', ['model' => __('models/branches.singular')])
         );
     }
 
@@ -249,14 +249,14 @@ class UserAPIController extends AppBaseController
      * @return Response
      *
      * @SWG\Delete(
-     *      path="/users/{id}",
-     *      summary="Remove the specified User from storage",
-     *      tags={"User"},
-     *      description="Delete User",
+     *      path="/branches/{id}",
+     *      summary="Remove the specified Branch from storage",
+     *      tags={"Branch"},
+     *      description="Delete Branch",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="id",
-     *          description="id of User",
+     *          description="id of Branch",
      *          type="integer",
      *          required=true,
      *          in="path"
@@ -284,20 +284,20 @@ class UserAPIController extends AppBaseController
      */
     public function destroy($id)
     {
-        /** @var User $user */
-        $user = $this->userRepository->find($id);
+        /** @var Branch $branch */
+        $branch = $this->branchRepository->find($id);
 
-        if (empty($user)) {
+        if (empty($branch)) {
             return $this->sendError(
-                __('messages.not_found', ['model' => __('models/users.singular')])
+                __('messages.not_found', ['model' => __('models/branches.singular')])
             );
         }
 
-        $user->delete();
+        $branch->delete();
 
         return $this->sendResponse(
             $id,
-            __('messages.deleted', ['model' => __('models/users.singular')])
+            __('messages.deleted', ['model' => __('models/branches.singular')])
         );
     }
 }

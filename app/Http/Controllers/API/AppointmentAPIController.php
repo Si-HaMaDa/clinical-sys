@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Requests\API\CreateUserAPIRequest;
-use App\Http\Requests\API\UpdateUserAPIRequest;
-use App\Models\User;
-use App\Repositories\UserRepository;
+use App\Http\Requests\API\CreateAppointmentAPIRequest;
+use App\Http\Requests\API\UpdateAppointmentAPIRequest;
+use App\Models\Appointment;
+use App\Repositories\AppointmentRepository;
 use Illuminate\Http\Request;
 use App\Http\Controllers\AppBaseController;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\AppointmentResource;
 use Response;
 use Spatie\QueryBuilder\QueryBuilder;
 
 /**
- * Class UserController
+ * Class AppointmentController
  * @package App\Http\Controllers\API
  */
 
-class UserAPIController extends AppBaseController
+class AppointmentAPIController extends AppBaseController
 {
-    /** @var  UserRepository */
-    private $userRepository;
+    /** @var  AppointmentRepository */
+    private $appointmentRepository;
 
-    public function __construct(UserRepository $userRepo)
+    public function __construct(AppointmentRepository $appointmentRepo)
     {
-        $this->userRepository = $userRepo;
+        $this->appointmentRepository = $appointmentRepo;
     }
 
     /**
@@ -32,10 +32,10 @@ class UserAPIController extends AppBaseController
      * @return Response
      *
      * @SWG\Get(
-     *      path="/users",
-     *      summary="Get a listing of the Users.",
-     *      tags={"User"},
-     *      description="Get all Users",
+     *      path="/appointments",
+     *      summary="Get a listing of the Appointments.",
+     *      tags={"Appointment"},
+     *      description="Get all Appointments",
      *      produces={"application/json"},
      *      @SWG\Response(
      *          response=200,
@@ -49,7 +49,7 @@ class UserAPIController extends AppBaseController
      *              @SWG\Property(
      *                  property="data",
      *                  type="array",
-     *                  @SWG\Items(ref="#/definitions/User")
+     *                  @SWG\Items(ref="#/definitions/Appointment")
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -61,33 +61,33 @@ class UserAPIController extends AppBaseController
      */
     public function index(Request $request)
     {
-        $users = QueryBuilder::for(User::class)
-            ->allowedFilters($this->userRepository->getFieldsSearchable())
-            ->allowedSorts($this->userRepository->getFieldsSearchable())
+        $appointments = QueryBuilder::for(Appointment::class)
+            ->allowedFilters($this->appointmentRepository->getFieldsSearchable())
+            ->allowedSorts($this->appointmentRepository->getFieldsSearchable())
             ->paginate();
 
         return $this->sendResponse(
-            UserResource::collection($users),
-            __('messages.retrieved', ['model' => __('models/users.plural')])
+            AppointmentResource::collection($appointments),
+            __('messages.retrieved', ['model' => __('models/appointments.plural')])
         );
     }
 
     /**
-     * @param CreateUserAPIRequest $request
+     * @param CreateAppointmentAPIRequest $request
      * @return Response
      *
      * @SWG\Post(
-     *      path="/users",
-     *      summary="Store a newly created User in storage",
-     *      tags={"User"},
-     *      description="Store User",
+     *      path="/appointments",
+     *      summary="Store a newly created Appointment in storage",
+     *      tags={"Appointment"},
+     *      description="Store Appointment",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="body",
      *          in="body",
-     *          description="User that should be stored",
+     *          description="Appointment that should be stored",
      *          required=false,
-     *          @SWG\Schema(ref="#/definitions/User")
+     *          @SWG\Schema(ref="#/definitions/Appointment")
      *      ),
      *      @SWG\Response(
      *          response=200,
@@ -100,7 +100,7 @@ class UserAPIController extends AppBaseController
      *              ),
      *              @SWG\Property(
      *                  property="data",
-     *                  ref="#/definitions/User"
+     *                  ref="#/definitions/Appointment"
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -110,15 +110,15 @@ class UserAPIController extends AppBaseController
      *      )
      * )
      */
-    public function store(CreateUserAPIRequest $request)
+    public function store(CreateAppointmentAPIRequest $request)
     {
         $input = $request->all();
 
-        $user = $this->userRepository->create($input);
+        $appointment = $this->appointmentRepository->create($input);
 
         return $this->sendResponse(
-            new UserResource($user),
-            __('messages.saved', ['model' => __('models/users.singular')])
+            new AppointmentResource($appointment),
+            __('messages.saved', ['model' => __('models/appointments.singular')])
         );
     }
 
@@ -127,14 +127,14 @@ class UserAPIController extends AppBaseController
      * @return Response
      *
      * @SWG\Get(
-     *      path="/users/{id}",
-     *      summary="Display the specified User",
-     *      tags={"User"},
-     *      description="Get User",
+     *      path="/appointments/{id}",
+     *      summary="Display the specified Appointment",
+     *      tags={"Appointment"},
+     *      description="Get Appointment",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="id",
-     *          description="id of User",
+     *          description="id of Appointment",
      *          type="integer",
      *          required=true,
      *          in="path"
@@ -150,7 +150,7 @@ class UserAPIController extends AppBaseController
      *              ),
      *              @SWG\Property(
      *                  property="data",
-     *                  ref="#/definitions/User"
+     *                  ref="#/definitions/Appointment"
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -162,35 +162,35 @@ class UserAPIController extends AppBaseController
      */
     public function show($id)
     {
-        /** @var User $user */
-        $user = $this->userRepository->find($id);
+        /** @var Appointment $appointment */
+        $appointment = $this->appointmentRepository->find($id);
 
-        if (empty($user)) {
+        if (empty($appointment)) {
             return $this->sendError(
-                __('messages.not_found', ['model' => __('models/users.singular')])
+                __('messages.not_found', ['model' => __('models/appointments.singular')])
             );
         }
 
         return $this->sendResponse(
-            new UserResource($user),
-            __('messages.retrieved', ['model' => __('models/users.singular')])
+            new AppointmentResource($appointment),
+            __('messages.retrieved', ['model' => __('models/appointments.singular')])
         );
     }
 
     /**
      * @param int $id
-     * @param UpdateUserAPIRequest $request
+     * @param UpdateAppointmentAPIRequest $request
      * @return Response
      *
      * @SWG\Put(
-     *      path="/users/{id}",
-     *      summary="Update the specified User in storage",
-     *      tags={"User"},
-     *      description="Update User",
+     *      path="/appointments/{id}",
+     *      summary="Update the specified Appointment in storage",
+     *      tags={"Appointment"},
+     *      description="Update Appointment",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="id",
-     *          description="id of User",
+     *          description="id of Appointment",
      *          type="integer",
      *          required=true,
      *          in="path"
@@ -198,9 +198,9 @@ class UserAPIController extends AppBaseController
      *      @SWG\Parameter(
      *          name="body",
      *          in="body",
-     *          description="User that should be updated",
+     *          description="Appointment that should be updated",
      *          required=false,
-     *          @SWG\Schema(ref="#/definitions/User")
+     *          @SWG\Schema(ref="#/definitions/Appointment")
      *      ),
      *      @SWG\Response(
      *          response=200,
@@ -213,7 +213,7 @@ class UserAPIController extends AppBaseController
      *              ),
      *              @SWG\Property(
      *                  property="data",
-     *                  ref="#/definitions/User"
+     *                  ref="#/definitions/Appointment"
      *              ),
      *              @SWG\Property(
      *                  property="message",
@@ -223,24 +223,24 @@ class UserAPIController extends AppBaseController
      *      )
      * )
      */
-    public function update($id, UpdateUserAPIRequest $request)
+    public function update($id, UpdateAppointmentAPIRequest $request)
     {
         $input = $request->all();
 
-        /** @var User $user */
-        $user = $this->userRepository->find($id);
+        /** @var Appointment $appointment */
+        $appointment = $this->appointmentRepository->find($id);
 
-        if (empty($user)) {
+        if (empty($appointment)) {
             return $this->sendError(
-                __('messages.not_found', ['model' => __('models/users.singular')])
+                __('messages.not_found', ['model' => __('models/appointments.singular')])
             );
         }
 
-        $user = $this->userRepository->update($input, $id);
+        $appointment = $this->appointmentRepository->update($input, $id);
 
         return $this->sendResponse(
-            new UserResource($user),
-            __('messages.updated', ['model' => __('models/users.singular')])
+            new AppointmentResource($appointment),
+            __('messages.updated', ['model' => __('models/appointments.singular')])
         );
     }
 
@@ -249,14 +249,14 @@ class UserAPIController extends AppBaseController
      * @return Response
      *
      * @SWG\Delete(
-     *      path="/users/{id}",
-     *      summary="Remove the specified User from storage",
-     *      tags={"User"},
-     *      description="Delete User",
+     *      path="/appointments/{id}",
+     *      summary="Remove the specified Appointment from storage",
+     *      tags={"Appointment"},
+     *      description="Delete Appointment",
      *      produces={"application/json"},
      *      @SWG\Parameter(
      *          name="id",
-     *          description="id of User",
+     *          description="id of Appointment",
      *          type="integer",
      *          required=true,
      *          in="path"
@@ -284,20 +284,20 @@ class UserAPIController extends AppBaseController
      */
     public function destroy($id)
     {
-        /** @var User $user */
-        $user = $this->userRepository->find($id);
+        /** @var Appointment $appointment */
+        $appointment = $this->appointmentRepository->find($id);
 
-        if (empty($user)) {
+        if (empty($appointment)) {
             return $this->sendError(
-                __('messages.not_found', ['model' => __('models/users.singular')])
+                __('messages.not_found', ['model' => __('models/appointments.singular')])
             );
         }
 
-        $user->delete();
+        $appointment->delete();
 
         return $this->sendResponse(
             $id,
-            __('messages.deleted', ['model' => __('models/users.singular')])
+            __('messages.deleted', ['model' => __('models/appointments.singular')])
         );
     }
 }

@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use Eloquent as Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\LaratrustUserTrait;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @SWG\Definition(
@@ -76,13 +79,16 @@ use Laratrust\Traits\LaratrustUserTrait;
  *      )
  * )
  */
-class User extends Model
+class User extends Authenticatable
+implements \Illuminate\Contracts\Auth\Authenticatable
 {
     use LaratrustUserTrait, SoftDeletes;
 
     public $table = 'users';
 
     protected $dates = ['deleted_at'];
+
+    public $guard = [];
 
     public $fillable = [
         'name',
