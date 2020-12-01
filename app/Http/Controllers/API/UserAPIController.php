@@ -120,7 +120,7 @@ class UserAPIController extends AppBaseController
         $input = $request->all();
 
         $user = $this->userRepository->create($input);
-        $user->attachRole($request->role);
+        $user->attachRole($request->type);
 
         return $this->sendResponse(
             new UserResource($user),
@@ -244,7 +244,7 @@ class UserAPIController extends AppBaseController
 
         $user = $this->userRepository->update($input, $id);
 
-        $user->syncRoles([$request->role]);
+        $user->syncRoles([$request->type, $request->role]);
 
         return $this->sendResponse(
             new UserResource($user),

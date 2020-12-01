@@ -24,6 +24,15 @@ return [
         'user' => [
             'profile' => 'r,u',
         ],
+        'doctor' => [
+            'profile' => 'r,u',
+        ],
+        'staff' => [
+            'profile' => 'r,u',
+        ],
+        'patient' => [
+            'profile' => 'r,u',
+        ],
         'role_name' => [
             'module_1_name' => 'c,r,u,d',
         ]

@@ -3,10 +3,11 @@
 return array (
   'singular' => 'User',
   'plural' => 'Users',
-  'fields' => 
+  'fields' =>
   array (
     'id' => 'Id',
     'name' => 'Name',
+    'type' => 'Type',
     'phone' => 'Phone',
     'address' => 'Address',
     'gender' => 'Gender',

@@ -15,10 +15,15 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 /**
  * @SWG\Definition(
  *      definition="User",
- *      required={"name", "phone", "address", "gender", "age", "email", "password"},
+ *      required={"name", "type", "phone", "address", "gender", "age", "email", "password"},
  *      @SWG\Property(
  *          property="name",
  *          description="name",
+ *          type="string"
+ *      ),
+ *      @SWG\Property(
+ *          property="type",
+ *          description="type",
  *          type="string"
  *      ),
  *      @SWG\Property(
@@ -94,6 +99,7 @@ class User extends Authenticatable implements HasMedia
 
     public $fillable = [
         'name',
+        'type',
         'phone',
         'address',
         'gender',
@@ -110,6 +116,7 @@ class User extends Authenticatable implements HasMedia
      */
     protected $casts = [
         'name' => 'string',
+        'type' => 'string',
         'phone' => 'string',
         'address' => 'string',
         'gender' => 'string',
@@ -128,6 +135,7 @@ class User extends Authenticatable implements HasMedia
      */
     public static $rules = [
         'name' => 'required',
+        'type' => 'required|in:doctor,staff,patient',
         'phone' => 'required',
         'address' => 'required',
         'gender' => 'required',
