@@ -34,8 +34,8 @@ class CreateAppointmentsTable extends Migration
             $table->softDeletes();
             $table->foreign('patient_id')->references('id')->on('users');
             $table->foreign('doctor_id')->references('id')->on('users');
-            $table->foreign('offer_id')->references('id')->on('offers');
-            $table->foreign('tax_id')->references('id')->on('taxes');
+            // $table->foreign('offer_id')->references('id')->on('offers');
+            // $table->foreign('tax_id')->references('id')->on('taxes');
         });
     }
 

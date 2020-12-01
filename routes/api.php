@@ -43,3 +43,6 @@ Route::resource('branches', 'BranchAPIController');
 Route::resource('departments', 'DepartmentAPIController');
 
 Route::resource('appointments', 'AppointmentAPIController');
+
+Route::get('roles/permissions', 'RoleAPIController@permissions');
+Route::resource('roles', 'RoleAPIController');
